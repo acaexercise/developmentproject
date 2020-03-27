@@ -6,7 +6,7 @@ phases:
       - dotnet restore 
   build:
     commands:
-      - dotnet publish -c release -o ./build_output ACA.Classes
+      - dotnet publish -c release -o ./build_output 
 artifacts:
   files:
-    - ACA.Classes/build_output/**/*
+    - build_output/**/*
