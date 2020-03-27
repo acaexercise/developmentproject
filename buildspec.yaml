@@ -3,7 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - dotnet restore ACA.Classes
+      - dotnet restore 
   build:
     commands:
       - dotnet publish -c release -o ./build_output ACA.Classes
