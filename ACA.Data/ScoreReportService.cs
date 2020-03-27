@@ -40,7 +40,7 @@ namespace ACA.Data
                 scoreReport.ClassScores.Add(classScoreReport);
                 stopWatch.Stop();
                 //TODO:Instead of just logging this out, this could be a useful metric to capture to Cloudwatch or whatever monitoring is used
-                _logger.LogInformation("GetScoreReport - Completed in {} Milliseconds",stopWatch.ElapsedMilliseconds);
+                _logger.LogInformation("GetScoreReport - Completed in {ElapsedMilliseconds} Milliseconds", stopWatch.ElapsedMilliseconds);
             }
             return scoreReport;
         }

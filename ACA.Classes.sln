@@ -7,6 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACA.Classes.Tests", "ACA.Cl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0127AB7F-9802-48D2-8F91-875BCA2D58D0}"
 	ProjectSection(SolutionItems) = preProject
+		buildspec.yaml = buildspec.yaml
 		Developer Candidate Project Guidelines.docx = Developer Candidate Project Guidelines.docx
 	EndProjectSection
 EndProject
@@ -17,9 +18,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataFiles", "DataFiles", "{
 		ClassC.csv = ClassC.csv
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACA.Data", "ACA.Data\ACA.Data.csproj", "{F815706C-4026-40D5-B7E0-F19A0AA70CDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACA.Data", "ACA.Data\ACA.Data.csproj", "{F815706C-4026-40D5-B7E0-F19A0AA70CDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ACA.Domain", "ACA.Domain\ACA.Domain.csproj", "{81D98244-2A61-4482-B814-032F8B24E1FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ACA.Domain", "ACA.Domain\ACA.Domain.csproj", "{81D98244-2A61-4482-B814-032F8B24E1FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
