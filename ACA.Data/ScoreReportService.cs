@@ -19,52 +19,54 @@ namespace ACA.Data
             _csvDataFileService = csvDataFileService;
         }
 
-        public async Task ExportScoreReportToFileAsync(string file)
+        public async Task<Stream> ExportScoreReportToStreamAsync()
         {
             var scoreReport = await GetScoreReportAsync();
             var highestPerformingClassLabel = " Highest Performing Class(es) - ";
-            using (var outputFile = new StreamWriter(file))
+            var memoryStream = new MemoryStream();
+            var streamWriter = new StreamWriter(memoryStream);
+            await streamWriter.WriteLineAsync(new string('*', 100));
+            if (!string.IsNullOrEmpty(scoreReport.HighestPerformingClass))
             {
-                await outputFile.WriteLineAsync(new string('*', 100));
-                if (!string.IsNullOrEmpty(scoreReport.HighestPerformingClass))
+                await streamWriter.WriteLineAsync($"*** {highestPerformingClassLabel} {scoreReport.HighestPerformingClass}{new string(' ', 92 - highestPerformingClassLabel.Length - scoreReport.HighestPerformingClass.Length)}***");
+            }
+            else
+            {
+                if (!scoreReport.ClassScores.Any())
                 {
-                    await outputFile.WriteLineAsync($"*** {highestPerformingClassLabel} {scoreReport.HighestPerformingClass}{new string(' ', 92 - highestPerformingClassLabel.Length - scoreReport.HighestPerformingClass.Length)}***");
+                    await streamWriter.WriteLineAsync("No Score Data Found, please check the input files");
+                    return memoryStream;
                 }
-                else
-                {
-                    if (!scoreReport.ClassScores.Any())
-                    {
-                        await outputFile.WriteLineAsync("No Score Data Found, please check the input files");
-                        return;
-                    }
-                }
-                await outputFile.WriteLineAsync(new string('*', 100));
-                await outputFile.WriteLineAsync();
-                if (scoreReport.AverageAllStudents.HasValue)
-                {
-                    await outputFile.WriteLineAsync($"All Students Average Score - {Math.Round(scoreReport.AverageAllStudents.Value, 1)}");
-                }
+            }
+            await streamWriter.WriteLineAsync(new string('*', 100));
+            await streamWriter.WriteLineAsync();
+            if (scoreReport.AverageAllStudents.HasValue)
+            {
+                await streamWriter.WriteLineAsync($"All Students Average Score - {Math.Round(scoreReport.AverageAllStudents.Value, 1)}");
+            }
 
-                foreach (var classScore in scoreReport.ClassScores.OrderByDescending(c => c.ClassAverage))
+            foreach (var classScore in scoreReport.ClassScores.OrderByDescending(c => c.ClassAverage))
+            {
+                await streamWriter.WriteLineAsync();
+                await streamWriter.WriteLineAsync($"Class - {classScore.ClassName}");
+                if (classScore.RoundedClassAverage.HasValue)
                 {
-                    await outputFile.WriteLineAsync();
-                    await outputFile.WriteLineAsync($"Class - {classScore.ClassName}");
-                    if (classScore.RoundedClassAverage.HasValue)
+                    await streamWriter.WriteLineAsync($"Class Score Average - {classScore.RoundedClassAverage.Value}");
+                }
+                await streamWriter.WriteLineAsync($"Class Total Students - {classScore.TotalStudents}");
+                await streamWriter.WriteLineAsync($"Class Total Students included in Average - {classScore.IncludedStudents.Count}");
+                if (classScore.ExcludedStudents.Any())
+                {
+                    await streamWriter.WriteLineAsync("Students Excluded");
+                    foreach (var excludedStudent in classScore.ExcludedStudents)
                     {
-                        await outputFile.WriteLineAsync($"Class Score Average - {classScore.RoundedClassAverage.Value}");
-                    }
-                    await outputFile.WriteLineAsync($"Class Total Students - {classScore.TotalStudents}");
-                    await outputFile.WriteLineAsync($"Class Total Students included in Average - {classScore.IncludedStudents.Count}");
-                    if (classScore.ExcludedStudents.Any())
-                    {
-                        await outputFile.WriteLineAsync("Students Excluded");
-                        foreach (var excludedStudent in classScore.ExcludedStudents)
-                        {
-                            await outputFile.WriteLineAsync($"{excludedStudent.Name}");
-                        }
+                        await streamWriter.WriteLineAsync($"{excludedStudent.Name}");
                     }
                 }
             }
+            streamWriter.Flush();
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            return memoryStream;
         }
 
         public async Task<ScoreReport> GetScoreReportAsync()

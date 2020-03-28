@@ -1,0 +1,30 @@
+﻿@page "/"
+@inherits IndexBase
+@using ACA.Classes.Blazor.Charts;
+
+<div class="dashboard">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <h3 class="card-header">Class Grades</h3>
+                <div class="card-body">
+
+                    <div class="row">
+                        <TelerikButton OnClick="@OnClickHandler">Generate Text Report</TelerikButton>
+                    </div>
+
+                        <div class="row">
+
+                            <div class="col-sm-12 col-md-6 col-lg text-success ">
+                                <ClassGradesChart ChartData="@ClassScoreReports"></ClassGradesChart>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+        </div>
+
+    </div>
+</div>

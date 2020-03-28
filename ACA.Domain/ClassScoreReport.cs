@@ -42,6 +42,8 @@ namespace ACA.Domain
         /// </summary>
         public int TotalStudentsIncludedInAverage => IncludedStudents.Count;
 
+        public int TotalStudentsExcludedFromAverage => ExcludedStudents.Count;
+
         /// <summary>
         /// c.	For each class:
         /// iv.	The names of any students who were discarded from consideration

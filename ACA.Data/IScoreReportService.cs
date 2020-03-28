@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using ACA.Domain;
 
 namespace ACA.Data
@@ -7,6 +8,6 @@ namespace ACA.Data
     {
         Task<ScoreReport> GetScoreReportAsync();
 
-        Task ExportScoreReportToFileAsync(string file);
+        Task<Stream> ExportScoreReportToStreamAsync();
     }
 }

@@ -22,18 +22,24 @@ namespace ACA.Classes.Tests
         public async Task ExportScoreReportToFileTest()
         {
             var scoreReportService = ServiceProvider.GetService<IScoreReportService>();
-            await scoreReportService.ExportScoreReportToFileAsync(@"D:\ACA_exercise.txt");
+            var fileService = ServiceProvider.GetService<ICsvDataFileService>();
+            var stream = await scoreReportService.ExportScoreReportToStreamAsync();
+            var savedFile = await fileService.SaveStreamToFile(stream);
+            Assert.IsNotNull(savedFile);
         }
 
         [TestMethod]
-        public async Task ExportScoreReportToFileEmptyFileDoesNOTThrowTests()
+        public async Task ExportScoreReportToFileEmptyFileDoesNOTThrowTest()
         {
             var overrideConfig = ServiceProvider.GetService<ICsvDataFileConfiguration>();
             var scoreReportService = ServiceProvider.GetService<IScoreReportService>();
+            var fileService = ServiceProvider.GetService<ICsvDataFileService>();
             
             overrideConfig.DataFileLocation = @"aca-testdatafiles";
             overrideConfig.FileSearchPattern = "Empty.csv";
-            await scoreReportService.ExportScoreReportToFileAsync(@"D:\ACA_exercise.txt");
+            var stream = await scoreReportService.ExportScoreReportToStreamAsync();
+            var savedFile = await fileService.SaveStreamToFile(stream);
+            Assert.IsNotNull(savedFile);
         }
 
     }

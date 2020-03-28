@@ -1,0 +1,52 @@
+﻿@using ACA.Domain
+
+<TelerikChart>
+    <ChartSeriesItems>
+        <ChartSeries Type="ChartSeriesType.Column" Name="Rounded Class Average"
+                     CategoryField="@nameof(ClassScoreReport.ClassName)"
+                     Field="@nameof(ClassScoreReport.RoundedClassAverage)" Data="@ChartData">
+        </ChartSeries>
+        <ChartSeries Type="ChartSeriesType.Column" Name="Class Average"
+                     CategoryField="@nameof(ClassScoreReport.ClassName)"
+                     Field="@nameof(ClassScoreReport.ClassAverage)" Data="@ChartData">
+        </ChartSeries>
+    </ChartSeriesItems>
+
+    <ChartTitle Text="Average Class Scores"></ChartTitle>
+
+   
+</TelerikChart>
+
+<TelerikChart>
+    <ChartSeriesItems>
+        <ChartSeries Type="ChartSeriesType.Column" Name="Students Included In Average"
+                     CategoryField="@nameof(ClassScoreReport.ClassName)"
+                     Field="@nameof(ClassScoreReport.TotalStudentsIncludedInAverage)" Data="@ChartData">
+            <ChartSeriesStack Group="Detail" ></ChartSeriesStack>
+        </ChartSeries>
+        <ChartSeries Type="ChartSeriesType.Column" Name="Students Excluded From Average"
+                     CategoryField="@nameof(ClassScoreReport.ClassName)"
+                     Field="@nameof(ClassScoreReport.TotalStudentsExcludedFromAverage)" Data="@ChartData">
+            <ChartSeriesStack Group="Detail"></ChartSeriesStack>
+        </ChartSeries>
+        <ChartSeries Type="ChartSeriesType.Column" Name="Total Students"
+                     CategoryField="@nameof(ClassScoreReport.ClassName)"
+                     Field="@nameof(ClassScoreReport.TotalStudents)" Data="@ChartData">
+            <ChartSeriesStack Group="Total"></ChartSeriesStack>
+        </ChartSeries>
+    </ChartSeriesItems>
+
+    <ChartTitle Text="Students"></ChartTitle>
+
+
+</TelerikChart>
+
+@code {
+
+    [Parameter]
+    public IEnumerable<ClassScoreReport> ChartData { get; set; }
+
+    [Parameter]
+    public string[] Categories { get; set; }
+
+}

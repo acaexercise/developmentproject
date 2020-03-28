@@ -24,8 +24,14 @@ namespace ACA.Data
             _csvDataFileConfiguration = csvDataFileConfiguration;
         }
 
+        /// <summary>
+        /// Directory to read Data Files From
+        /// </summary>
         public string DataFileLocation => _csvDataFileConfiguration.DataFileLocation;
 
+        /// <summary>
+        /// Pattern to use to identify data files to include
+        /// </summary>
         public string FileSearchPattern => _csvDataFileConfiguration.FileSearchPattern;
 
         /// <summary>
@@ -86,6 +92,25 @@ namespace ACA.Data
                 _logger.LogError("GetStudentGradesFromCsvFile - Invalid Data (could not convert type) found on file {file} - {e}", file, e);
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Saves specified memory stream to the files system
+        /// </summary>
+        /// <param name="memoryStream"></param>
+        /// <returns></returns>
+        public Task<string> SaveStreamToFile(Stream memoryStream)
+        {
+            var fileName = _csvDataFileConfiguration.OutputFileFolder + Guid.NewGuid() + ".txt";
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            using (var fs = new FileStream(fileName, FileMode.OpenOrCreate))
+            {
+                memoryStream.CopyTo(fs);
+                fs.Flush();
+            }
+
+            return Task.FromResult(fileName);
         }
     }
 }

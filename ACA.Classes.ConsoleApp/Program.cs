@@ -48,7 +48,6 @@ namespace ACA.Classes.ConsoleApp
                 _serviceCollection.Configure<CsvDataFileConfiguration>(_config.GetSection("CsvDataFileConfiguration"));
                 _serviceCollection.AddSingleton<ICsvDataFileConfiguration>(resolver =>
                     resolver.GetRequiredService<IOptions<CsvDataFileConfiguration>>().Value);
-
             }
 
             _serviceCollection.AddSingleton<IScoreReportService, ScoreReportService>();
@@ -84,9 +83,18 @@ namespace ACA.Classes.ConsoleApp
             {
                 logger.LogInformation("No FileSearchPattern Provided - using default pattern");
             }
-       
+            if (Array.IndexOf(args, "-OutputFile") + 1 < args.Length)
+            {
+                logger.LogInformation("OutputFile Provided - overriding default output file");
+                overrideConfig.FileSearchPattern = args[Array.IndexOf(args, "-OutputFile") + 1];
+            }
+            else
+            {
+                logger.LogInformation("No FileSearchPattern Provided - using default pattern");
+            }
             var scoreReportService = ServiceProvider.GetService<IScoreReportService>();
-            await scoreReportService.ExportScoreReportToFileAsync(@"D:\ACA_exercise.txt");
+            var stream = await scoreReportService.ExportScoreReportToStreamAsync();
+            //await scoreReportService.ExportScoreReportToFileAsync(overrideConfig.OutputFileFolder + Guid.NewGuid().ToString() + ".txt");
         }
 
         private static IServiceProvider _serviceProvider;

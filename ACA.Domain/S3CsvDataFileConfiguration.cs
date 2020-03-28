@@ -8,6 +8,8 @@ namespace ACA.Domain
 
         public string FileSearchPattern { get; set; }
 
+        public string OutputFileFolder { get; set; }
+
         public void Validate()
         {
             if (string.IsNullOrEmpty(DataFileLocation))
@@ -18,6 +20,11 @@ namespace ACA.Domain
             if (string.IsNullOrEmpty(FileSearchPattern))
             {
                 throw new Exception("S3CsvDataFileConfiguration.FileSearchPattern must not be null or empty");
+            }
+
+            if (string.IsNullOrEmpty(OutputFileFolder))
+            {
+                throw new Exception("OutputFileFolder.FileSearchPattern must not be null or empty");
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using ACA.Domain;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Amazon.S3.Transfer;
 using CsvHelper;
 using CsvHelper.TypeConversion;
 using Microsoft.Extensions.Logging;
@@ -25,11 +27,22 @@ namespace ACA.Data
             _s3CsvDataFileConfiguration = s3CsvDataFileConfiguration;
             _amazonS3Client = new AmazonS3Client(RegionEndpoint.USEast2);
         }
-
+      
+        /// <summary>
+        /// Bucket Name to read data from
+        /// </summary>
         public string DataFileLocation => _s3CsvDataFileConfiguration.DataFileLocation;
 
+        /// <summary>
+        /// Search pattern used to identify objects in s3 to read in
+        /// </summary>
         public string FileSearchPattern => _s3CsvDataFileConfiguration.FileSearchPattern;
 
+        /// <summary>
+        /// Gets all the S3 objects from the specified Bucket (DataFileLocation) using
+        /// the specified search pattern (FileSearchPattern)
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<string>> GetCsvFilesInDirectoryAsync()
         {
             _logger.LogInformation("GetCsvFilesInDirectory - DataFileLocation:{DataFileLocation},FileSearchPattern:{FileSearchPattern}", DataFileLocation, FileSearchPattern);
@@ -58,6 +71,11 @@ namespace ACA.Data
             return s3Keys;
         }
 
+        /// <summary>
+        /// Extracts out the student grades from the specified file
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public async Task<List<Student>> GetStudentGradesFromCsvFileAsync(string file)
         {
             _logger.LogInformation("GetStudentGradesFromCsvFile - File:{file}", file);
@@ -102,6 +120,33 @@ namespace ACA.Data
                 _logger.LogError(
                     "GetStudentGradesFromCsvFile - Invalid Data (could not convert type) found on file {file} - {e}",
                     file, e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Saves the stream to S3 Object
+        /// </summary>
+        /// <param name="memoryStream"></param>
+        /// <returns></returns>
+        public async Task<string> SaveStreamToFile(Stream memoryStream)
+        {
+            try
+            {
+                var bucketName = _s3CsvDataFileConfiguration.DataFileLocation;
+                var keyName = Guid.NewGuid() + ".txt";
+                var filePath = _s3CsvDataFileConfiguration.OutputFileFolder;
+
+               var fileTransferUtility = new TransferUtility(_amazonS3Client);
+               memoryStream.Seek(0, SeekOrigin.Begin);
+
+               await fileTransferUtility.UploadAsync(memoryStream, bucketName, filePath + "/" + keyName);
+             
+                return filePath + "/" + keyName;
+            }
+            catch (AmazonS3Exception e)
+            {
+                _logger.LogError("GetStudentGradesFromCsvFile - Error occurred writing file to S3 - {Error}",e);
                 throw;
             }
         }
