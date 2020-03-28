@@ -64,9 +64,9 @@ namespace ACA.Data
                     }
                     using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                     {
-                        var records = csv.GetRecords<Student>();
+                        var records = csv.GetRecords<Student>().ToList();
                         _logger.LogInformation("GetStudentGradesFromCsvFile - Read {Count} from File:{file}",records.Count(), file);
-                        return records.ToList();
+                        return records;
                     }
                 }
             }

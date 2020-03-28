@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using ACA.Domain;
 using Microsoft.Extensions.Logging;
 
@@ -15,6 +17,54 @@ namespace ACA.Data
         {
             _logger = logger;
             _csvDataFileService = csvDataFileService;
+        }
+
+        public async Task ExportScoreReportToFile(string file)
+        {
+            var scoreReport = GetScoreReport();
+            var highestPerformingClassLabel = " Highest Performing Class(es) - ";
+            using (var outputFile = new StreamWriter(file))
+            {
+                await outputFile.WriteLineAsync(new string('*', 100));
+                if (!string.IsNullOrEmpty(scoreReport.HighestPerformingClass))
+                {
+                    await outputFile.WriteLineAsync($"*** {highestPerformingClassLabel} {scoreReport.HighestPerformingClass}{new string(' ', 92 - highestPerformingClassLabel.Length - scoreReport.HighestPerformingClass.Length)}***");
+                }
+                else
+                {
+                    if (!scoreReport.ClassScores.Any())
+                    {
+                        await outputFile.WriteLineAsync("No Score Data Found, please check the input files");
+                        return;
+                    }
+                }
+                await outputFile.WriteLineAsync(new string('*', 100));
+                await outputFile.WriteLineAsync();
+                if (scoreReport.AverageAllStudents.HasValue)
+                {
+                    await outputFile.WriteLineAsync($"All Students Average Score - {Math.Round(scoreReport.AverageAllStudents.Value, 1)}");
+                }
+
+                foreach (var classScore in scoreReport.ClassScores.OrderByDescending(c => c.ClassAverage))
+                {
+                    await outputFile.WriteLineAsync();
+                    await outputFile.WriteLineAsync($"Class - {classScore.ClassName}");
+                    if (classScore.RoundedClassAverage.HasValue)
+                    {
+                        await outputFile.WriteLineAsync($"Class Score Average - {classScore.RoundedClassAverage.Value}");
+                    }
+                    await outputFile.WriteLineAsync($"Class Total Students - {classScore.TotalStudents}");
+                    await outputFile.WriteLineAsync($"Class Total Students included in Average - {classScore.IncludedStudents.Count}");
+                    if (classScore.ExcludedStudents.Any())
+                    {
+                        await outputFile.WriteLineAsync("Students Excluded");
+                        foreach (var excludedStudent in classScore.ExcludedStudents)
+                        {
+                            await outputFile.WriteLineAsync($"{excludedStudent.Name}");
+                        }
+                    }
+                }
+            }
         }
 
         public ScoreReport GetScoreReport()
@@ -40,8 +90,8 @@ namespace ACA.Data
                 scoreReport.ClassScores.Add(classScoreReport);
                 stopWatch.Stop();
                 //TODO:Instead of just logging this out, this could be a useful metric to capture to Cloudwatch or whatever monitoring is used
-                _logger.LogInformation("GetScoreReport - Completed in {ElapsedMilliseconds} Milliseconds", stopWatch.ElapsedMilliseconds);
             }
+            _logger.LogInformation("GetScoreReport - Completed in {ElapsedMilliseconds} Milliseconds", stopWatch.ElapsedMilliseconds);
             return scoreReport;
         }
     }

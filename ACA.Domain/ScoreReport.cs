@@ -18,9 +18,17 @@ namespace ACA.Domain
         {
             get
             {
-                var bestInClass = ClassScores.Where(report => report.ClassAverage.HasValue)
-                    .OrderByDescending(report => report.ClassAverage.Value).FirstOrDefault();
-                return bestInClass?.ClassName;
+                //possible multiple classes could be tied
+                if (ClassScores.Any(report => report.ClassAverage.HasValue))
+                {
+                    var bestScore = ClassScores.Where(report => report.ClassAverage.HasValue)
+                        .Max(report => report.ClassAverage.Value);
+                    var highestPerformingClasses = ClassScores.Where(report =>
+                        report.ClassAverage.HasValue && report.ClassAverage.Value == bestScore);
+                    return string.Join(",", highestPerformingClasses.Select(highPerformer => highPerformer.ClassName));
+                }
+
+                return string.Empty;
             }
         }
 

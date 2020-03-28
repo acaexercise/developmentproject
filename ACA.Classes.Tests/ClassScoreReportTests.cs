@@ -68,7 +68,7 @@ namespace ACA.Classes.Tests
                 Grade = null
             });
             //3.	Student scores with a decimal should be truncated to the nearest whole number before calculating class average 
-            //4.	All class averages should be rounded to one decimal place (because of 3. - this is meaningless)
+            //4.	All class averages should be rounded to one decimal place 
             Assert.IsTrue(classScoreReport.RoundedClassAverage == 88.0m);
         }
 
