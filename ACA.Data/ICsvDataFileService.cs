@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ACA.Domain;
 
 namespace ACA.Data
 {
     public interface ICsvDataFileService
     {
-        List<string> GetCsvFilesInDirectory();
- 
-        List<Student> GetStudentGradesFromCsvFile(string file);
+        Task<List<string>> GetCsvFilesInDirectoryAsync();
+
+        Task<List<Student>> GetStudentGradesFromCsvFileAsync(string file);
 
         string DataFileLocation { get; }
 

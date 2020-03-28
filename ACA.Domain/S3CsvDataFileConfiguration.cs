@@ -2,7 +2,7 @@
 
 namespace ACA.Domain
 {
-    public class CsvDataFileConfiguration: IValidatable, ICsvDataFileConfiguration
+    public class S3CsvDataFileConfiguration : IValidatable, ICsvDataFileConfiguration
     {
         public string DataFileLocation { get; set; }
 
@@ -12,12 +12,12 @@ namespace ACA.Domain
         {
             if (string.IsNullOrEmpty(DataFileLocation))
             {
-                throw new Exception("CsvDataFileConfiguration.DataFileLocation must not be null or empty");
+                throw new Exception("S3CsvDataFileConfiguration.DataFileLocation must not be null or empty");
             }
 
             if (string.IsNullOrEmpty(FileSearchPattern))
             {
-                throw new Exception("CsvDataFileConfiguration.FileSearchPattern must not be null or empty");
+                throw new Exception("S3CsvDataFileConfiguration.FileSearchPattern must not be null or empty");
             }
         }
     }

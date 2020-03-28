@@ -11,10 +11,10 @@ namespace ACA.Classes.Tests
     public class ScoreReportServiceTests : TestBase
     {
         [TestMethod]
-        public void GetScoreReportTest()
+        public async Task GetScoreReportTest()
         {
             var scoreReportService = ServiceProvider.GetService<IScoreReportService>();
-            var scoreReport = scoreReportService.GetScoreReport();
+            var scoreReport = await scoreReportService.GetScoreReportAsync();
             Assert.IsNotNull(scoreReport);
         }
 
@@ -22,18 +22,18 @@ namespace ACA.Classes.Tests
         public async Task ExportScoreReportToFileTest()
         {
             var scoreReportService = ServiceProvider.GetService<IScoreReportService>();
-            await scoreReportService.ExportScoreReportToFile(@"D:\ACA_exercise.txt");
+            await scoreReportService.ExportScoreReportToFileAsync(@"D:\ACA_exercise.txt");
         }
 
         [TestMethod]
         public async Task ExportScoreReportToFileEmptyFileDoesNOTThrowTests()
         {
-            var overrideConfig = ServiceProvider.GetService<CsvDataFileConfiguration>();
+            var overrideConfig = ServiceProvider.GetService<ICsvDataFileConfiguration>();
             var scoreReportService = ServiceProvider.GetService<IScoreReportService>();
             
-            overrideConfig.DataFileLocation = @"TestDataFiles";
+            overrideConfig.DataFileLocation = @"aca-testdatafiles";
             overrideConfig.FileSearchPattern = "Empty.csv";
-            await scoreReportService.ExportScoreReportToFile(@"D:\ACA_exercise.txt");
+            await scoreReportService.ExportScoreReportToFileAsync(@"D:\ACA_exercise.txt");
         }
 
     }

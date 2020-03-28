@@ -24,16 +24,21 @@ namespace ACA.Classes.ConsoleApp
             }
 
             var builder = new ConfigurationBuilder();
-            _config = builder.AddJsonFile("appSettings.json").Build();
+            _config = builder.AddJsonFile("appSettings.json").AddEnvironmentVariables().Build();
 
             _serviceCollection = new ServiceCollection();
 
             _serviceCollection.AddLogging(loggingBuilder =>
                 loggingBuilder.AddConfiguration(_config.GetSection("Logging")).AddConsole());
+            
             _serviceCollection.Configure<CsvDataFileConfiguration>(_config.GetSection("CsvDataFileConfiguration"));
             _serviceCollection.AddSingleton(resolver =>
                 resolver.GetRequiredService<IOptions<CsvDataFileConfiguration>>().Value);
             _serviceCollection.AddSingleton(_config);
+
+            _serviceCollection.Configure<S3CsvDataFileConfiguration>(_config.GetSection("S3CsvDataFileConfiguration"));
+            _serviceCollection.AddSingleton(resolver =>
+                resolver.GetRequiredService<IOptions<S3CsvDataFileConfiguration>>().Value);
 
             _serviceCollection.AddSingleton<ICsvDataFileService, CsvDataFileService>();
             _serviceCollection.AddSingleton<IScoreReportService, ScoreReportService>();
@@ -71,7 +76,7 @@ namespace ACA.Classes.ConsoleApp
             }
        
             var scoreReportService = ServiceProvider.GetService<IScoreReportService>();
-            await scoreReportService.ExportScoreReportToFile(@"D:\ACA_exercise.txt");
+            await scoreReportService.ExportScoreReportToFileAsync(@"D:\ACA_exercise.txt");
         }
 
         private static IServiceProvider _serviceProvider;

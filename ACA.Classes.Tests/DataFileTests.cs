@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 using ACA.Data;
 using ACA.Domain;
 using CsvHelper;
@@ -16,15 +18,15 @@ namespace ACA.Classes.Tests
         /// Current setup will log a warning but won't throw
         /// </summary>
         [TestMethod]
-        public void GetStudentGradesFromEmptyCsvFileDoesNOTThrow()
+        public async Task GetStudentGradesFromEmptyCsvFileDoesNOTThrow()
         {
-            var overrideConfig = ServiceProvider.GetService<CsvDataFileConfiguration>();
-            overrideConfig.DataFileLocation = @"TestDataFiles";
-            overrideConfig.FileSearchPattern = "Empty.csv";
+            var overrideConfig = ServiceProvider.GetService<ICsvDataFileConfiguration>();
+            overrideConfig.DataFileLocation = @"aca-testdatafiles";
+            overrideConfig.FileSearchPattern = "empty.csv";
             var csvDataFileService = ServiceProvider.GetService<ICsvDataFileService>();
-            var dataFiles = csvDataFileService.GetCsvFilesInDirectory();
+            var dataFiles = await csvDataFileService.GetCsvFilesInDirectoryAsync();
             Assert.IsTrue(dataFiles.Count == 1);
-            var emptyResults = csvDataFileService.GetStudentGradesFromCsvFile(dataFiles.First());
+            var emptyResults = csvDataFileService.GetStudentGradesFromCsvFileAsync(dataFiles.First());
             Assert.IsNotNull(dataFiles);
         }
 
@@ -33,15 +35,15 @@ namespace ACA.Classes.Tests
         /// make sure this doesn't cause an issue
         /// </summary>
         [TestMethod]
-        public void GetStudentGradesFromCsvThatContainsSingleQuoteInNameDoesNOTThrow()
+        public async Task GetStudentGradesFromCsvThatContainsSingleQuoteInNameDoesNOTThrow()
         {
-            var overrideConfig = ServiceProvider.GetService<CsvDataFileConfiguration>();
-            overrideConfig.DataFileLocation = @"TestDataFiles";
+            var overrideConfig = ServiceProvider.GetService<ICsvDataFileConfiguration>();
+            overrideConfig.DataFileLocation = @"aca-testdatafiles";
             overrideConfig.FileSearchPattern = "single-quote-in-name.csv";
             var csvDataFileService = ServiceProvider.GetService<ICsvDataFileService>();
-            var dataFiles = csvDataFileService.GetCsvFilesInDirectory();
+            var dataFiles = await csvDataFileService.GetCsvFilesInDirectoryAsync();
             Assert.IsTrue(dataFiles.Count == 1);
-            var singleQuoteResults = csvDataFileService.GetStudentGradesFromCsvFile(dataFiles.First());
+            var singleQuoteResults = await csvDataFileService.GetStudentGradesFromCsvFileAsync(dataFiles.First());
             Assert.IsNotNull(singleQuoteResults);
             Assert.IsTrue(singleQuoteResults.Any());
             Assert.IsTrue(singleQuoteResults.First().Name == "Tammy O'Neil");
@@ -54,17 +56,17 @@ namespace ACA.Classes.Tests
         /// but weems like this probably warrants an exception
         /// </summary>
         [TestMethod]
-        public void GetStudentGradesFromCsvThatContainsDoubleQuoteInNameDoesNOTThrow()
+        public async Task GetStudentGradesFromCsvThatContainsDoubleQuoteInNameDoesNOTThrow()
         {
-            var overrideConfig = ServiceProvider.GetService<CsvDataFileConfiguration>();
-            overrideConfig.DataFileLocation = @"TestDataFiles";
+            var overrideConfig = ServiceProvider.GetService<ICsvDataFileConfiguration>();
+            overrideConfig.DataFileLocation = @"aca-testdatafiles";
             overrideConfig.FileSearchPattern = "double-quote-in-name.csv";
             var csvDataFileService = ServiceProvider.GetService<ICsvDataFileService>();
-            var dataFiles = csvDataFileService.GetCsvFilesInDirectory();
+            var dataFiles = await csvDataFileService.GetCsvFilesInDirectoryAsync();
             Assert.IsTrue(dataFiles.Count == 1);
-            Assert.ThrowsException<BadDataException>(() =>
+            await Assert.ThrowsExceptionAsync<BadDataException>(async () =>
             {
-                var doubleQuoteResults = csvDataFileService.GetStudentGradesFromCsvFile(dataFiles.First());
+                var doubleQuoteResults = await csvDataFileService.GetStudentGradesFromCsvFileAsync(dataFiles.First());
             });
         }
 
@@ -73,17 +75,17 @@ namespace ACA.Classes.Tests
         /// TODO:should be able to handle headerless file and just assume based on ordinal position
         /// </summary>
         [TestMethod]
-        public void GetStudentGradesFromHeaderlessCsvThrowsException()
+        public async Task GetStudentGradesFromHeaderlessCsvThrowsException()
         {
-            var overrideConfig = ServiceProvider.GetService<CsvDataFileConfiguration>();
-            overrideConfig.DataFileLocation = @"TestDataFiles";
+            var overrideConfig = ServiceProvider.GetService<ICsvDataFileConfiguration>();
+            overrideConfig.DataFileLocation = @"aca-testdatafiles";
             overrideConfig.FileSearchPattern = "missing-headers.csv";
             var csvDataFileService = ServiceProvider.GetService<ICsvDataFileService>();
-            var dataFiles = csvDataFileService.GetCsvFilesInDirectory();
+            var dataFiles = await csvDataFileService.GetCsvFilesInDirectoryAsync();
             Assert.IsTrue(dataFiles.Count == 1);
-            Assert.ThrowsException<HeaderValidationException>(() =>
+            await Assert.ThrowsExceptionAsync<HeaderValidationException>(async () =>
             {
-                var emptyResults = csvDataFileService.GetStudentGradesFromCsvFile(dataFiles.First());
+                var emptyResults = await csvDataFileService.GetStudentGradesFromCsvFileAsync(dataFiles.First());
             });
         }
 
@@ -92,17 +94,17 @@ namespace ACA.Classes.Tests
         /// TODO:should be able to handle (ignore) incorrect headers and just assume based on ordinal position
         /// </summary>
         [TestMethod]
-        public void GetStudentGradesFromIncorrectHeaderCsvThrowsException()
+        public async Task GetStudentGradesFromIncorrectHeaderCsvThrowsException()
         {
-            var overrideConfig = ServiceProvider.GetService<CsvDataFileConfiguration>();
-            overrideConfig.DataFileLocation = @"TestDataFiles";
+            var overrideConfig = ServiceProvider.GetService<ICsvDataFileConfiguration>();
+            overrideConfig.DataFileLocation = @"aca-testdatafiles";
             overrideConfig.FileSearchPattern = "incorrectly-named-headers.csv";
             var csvDataFileService = ServiceProvider.GetService<ICsvDataFileService>();
-            var dataFiles = csvDataFileService.GetCsvFilesInDirectory();
+            var dataFiles = await csvDataFileService.GetCsvFilesInDirectoryAsync();
             Assert.IsTrue(dataFiles.Count == 1);
-            Assert.ThrowsException<HeaderValidationException>(() =>
+            await Assert.ThrowsExceptionAsync<HeaderValidationException>(async () =>
             {
-                var emptyResults = csvDataFileService.GetStudentGradesFromCsvFile(dataFiles.First());
+                var emptyResults = await csvDataFileService.GetStudentGradesFromCsvFileAsync(dataFiles.First());
             });
         }
 
@@ -111,17 +113,17 @@ namespace ACA.Classes.Tests
         /// TODO:should be able to handle (ignore) incorrect headers and just assume based on ordinal position
         /// </summary>
         [TestMethod]
-        public void GetStudentGradesFromInvalidGradeFormCsvThrowsException()
+        public async Task GetStudentGradesFromInvalidGradeFormCsvThrowsException()
         {
-            var overrideConfig = ServiceProvider.GetService<CsvDataFileConfiguration>();
-            overrideConfig.DataFileLocation = @"TestDataFiles";
+            var overrideConfig = ServiceProvider.GetService<ICsvDataFileConfiguration>();
+            overrideConfig.DataFileLocation = @"aca-testdatafiles";
             overrideConfig.FileSearchPattern = "invalid-grade-format.csv";
             var csvDataFileService = ServiceProvider.GetService<ICsvDataFileService>();
-            var dataFiles = csvDataFileService.GetCsvFilesInDirectory();
+            var dataFiles = await csvDataFileService.GetCsvFilesInDirectoryAsync();
             Assert.IsTrue(dataFiles.Count == 1);
-            Assert.ThrowsException<TypeConverterException>(() =>
+            await Assert.ThrowsExceptionAsync<TypeConverterException>(async () =>
             {
-                var emptyResults = csvDataFileService.GetStudentGradesFromCsvFile(dataFiles.First());
+                var emptyResults = await csvDataFileService.GetStudentGradesFromCsvFileAsync(dataFiles.First());
             });
         }
     }

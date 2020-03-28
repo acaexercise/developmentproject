@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices.ComTypes;
+using System.Threading.Tasks;
 using ACA.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,21 +10,21 @@ namespace ACA.Classes.Tests
     public class CsvDataFileServiceTests: TestBase
     {
         [TestMethod]
-        public void GetCsvFilesInDirectoryTest()
+        public async Task GetCsvFilesInDirectoryTest()
         {
             var csvDataFileService = ServiceProvider.GetService<ICsvDataFileService>();
-            var dataFiles = csvDataFileService.GetCsvFilesInDirectory();
+            var dataFiles = await csvDataFileService.GetCsvFilesInDirectoryAsync();
             Assert.IsNotNull(dataFiles);
         }
 
         [TestMethod]
-        public void GetStudentGradesFromCsvFileTest()
+        public async Task GetStudentGradesFromCsvFileTest()
         {
             var csvDataFileService = ServiceProvider.GetService<ICsvDataFileService>();
-            var dataFiles = csvDataFileService.GetCsvFilesInDirectory();
+            var dataFiles = await csvDataFileService.GetCsvFilesInDirectoryAsync();
             foreach (var dataFile in dataFiles)
             {
-                var students = csvDataFileService.GetStudentGradesFromCsvFile(dataFile);
+                var students = await csvDataFileService.GetStudentGradesFromCsvFileAsync(dataFile);
                 Assert.IsNotNull(students);
             }
         }

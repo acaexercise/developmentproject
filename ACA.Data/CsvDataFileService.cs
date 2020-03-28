@@ -16,9 +16,9 @@ namespace ACA.Data
     public class CsvDataFileService : ICsvDataFileService
     {
         private readonly ILogger<CsvDataFileService> _logger;
-        private readonly CsvDataFileConfiguration _csvDataFileConfiguration;
+        private readonly ICsvDataFileConfiguration _csvDataFileConfiguration;
 
-        public CsvDataFileService(ILogger<CsvDataFileService> logger,CsvDataFileConfiguration csvDataFileConfiguration)
+        public CsvDataFileService(ILogger<CsvDataFileService> logger, ICsvDataFileConfiguration csvDataFileConfiguration)
         {
             _logger = logger;
             _csvDataFileConfiguration = csvDataFileConfiguration;
@@ -33,12 +33,12 @@ namespace ACA.Data
         /// matching the search pattern specified in configuration (Configuration Key FileSearchPattern)
         /// </summary>
         /// <returns></returns>
-        public List<string> GetCsvFilesInDirectory()
+        public Task<List<string>> GetCsvFilesInDirectoryAsync()
         {
             _logger.LogInformation("GetCsvFilesInDirectory - DataFileLocation:{DataFileLocation},FileSearchPattern:{FileSearchPattern}", DataFileLocation,FileSearchPattern);
             var csvFiles = Directory.GetFiles(DataFileLocation, FileSearchPattern);
             _logger.LogInformation("GetCsvFilesInDirectory Found {CountCsvFiles} Files Matching Search Pattern - DataFileLocation:{DataFileLocation},FileSearchPattern:{FileSearchPattern}", csvFiles.Length,DataFileLocation, FileSearchPattern);
-            return csvFiles.ToList();
+            return Task.FromResult(csvFiles.ToList());
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace ACA.Data
         /// first row containing Column Headers - Header columns
         /// Must be Named 'Student Name' and 'Grade'</param>
         /// <returns></returns>
-        public List<Student> GetStudentGradesFromCsvFile(string file)
+        public Task<List<Student>> GetStudentGradesFromCsvFileAsync(string file)
         {
             _logger.LogInformation("GetStudentGradesFromCsvFile - File:{file}", file);
             try
@@ -60,13 +60,13 @@ namespace ACA.Data
                     if (reader.BaseStream.Length == 0)
                     {
                         _logger.LogWarning("GetStudentGradesFromCsvFile - Empty File Discovered at - {file}",file);
-                        return new List<Student>();
+                        return Task.FromResult(new List<Student>());
                     }
                     using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                     {
                         var records = csv.GetRecords<Student>().ToList();
                         _logger.LogInformation("GetStudentGradesFromCsvFile - Read {Count} from File:{file}",records.Count(), file);
-                        return records;
+                        return Task.FromResult(records);
                     }
                 }
             }

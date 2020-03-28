@@ -5,8 +5,8 @@ namespace ACA.Data
 {
     public interface IScoreReportService
     {
-        ScoreReport GetScoreReport();
+        Task<ScoreReport> GetScoreReportAsync();
 
-        Task ExportScoreReportToFile(string file);
+        Task ExportScoreReportToFileAsync(string file);
     }
 }
