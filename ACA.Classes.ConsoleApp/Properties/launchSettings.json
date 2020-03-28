@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ACA.Classes.ConsoleApp": {
+      "commandName": "Project",
+      "commandLineArgs": "-DataFileLocation C:\\Users\\yem58\\\\source\\repos\\developmentproject\\DataFiles -FileSearchPattern *.csv"
+    }
+  }
+}
