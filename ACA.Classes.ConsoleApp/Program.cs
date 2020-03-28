@@ -31,16 +31,26 @@ namespace ACA.Classes.ConsoleApp
             _serviceCollection.AddLogging(loggingBuilder =>
                 loggingBuilder.AddConfiguration(_config.GetSection("Logging")).AddConsole());
             
-            _serviceCollection.Configure<CsvDataFileConfiguration>(_config.GetSection("CsvDataFileConfiguration"));
-            _serviceCollection.AddSingleton(resolver =>
-                resolver.GetRequiredService<IOptions<CsvDataFileConfiguration>>().Value);
+
             _serviceCollection.AddSingleton(_config);
 
-            _serviceCollection.Configure<S3CsvDataFileConfiguration>(_config.GetSection("S3CsvDataFileConfiguration"));
-            _serviceCollection.AddSingleton(resolver =>
-                resolver.GetRequiredService<IOptions<S3CsvDataFileConfiguration>>().Value);
+            var useS3 = _config.GetValue<bool>("UseS3", false);
+            if (useS3)
+            {
+                _serviceCollection.AddSingleton<ICsvDataFileService, S3CsvDataFileService>();
+                _serviceCollection.Configure<S3CsvDataFileConfiguration>(_config.GetSection("S3CsvDataFileConfiguration"));
+                _serviceCollection.AddSingleton<ICsvDataFileConfiguration>(resolver =>
+                    resolver.GetRequiredService<IOptions<S3CsvDataFileConfiguration>>().Value);
+            }
+            else
+            {
+                _serviceCollection.AddSingleton<ICsvDataFileService, CsvDataFileService>();
+                _serviceCollection.Configure<CsvDataFileConfiguration>(_config.GetSection("CsvDataFileConfiguration"));
+                _serviceCollection.AddSingleton<ICsvDataFileConfiguration>(resolver =>
+                    resolver.GetRequiredService<IOptions<CsvDataFileConfiguration>>().Value);
 
-            _serviceCollection.AddSingleton<ICsvDataFileService, CsvDataFileService>();
+            }
+
             _serviceCollection.AddSingleton<IScoreReportService, ScoreReportService>();
 
             var logger = ServiceProvider.GetService<ILoggerFactory>()
@@ -54,7 +64,7 @@ namespace ACA.Classes.ConsoleApp
                 validatable.Validate();
             }
 
-            var overrideConfig = ServiceProvider.GetService<CsvDataFileConfiguration>();
+            var overrideConfig = ServiceProvider.GetService<ICsvDataFileConfiguration>();
 
             if (Array.IndexOf(args, "-DataFileLocation") + 1 < args.Length)
             {
