@@ -47,6 +47,12 @@ namespace ACA.Data
             return Task.FromResult(csvFiles.ToList());
         }
 
+        public Task<bool> ResetDataFilesAsync()
+        {
+            //TODO:Implement
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Returns a list of Students from the specified
         /// csv file

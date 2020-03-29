@@ -29,3 +29,11 @@
 - Logging via .NET Core's Built in ILogger routed to Cloudwatch LogGroup
 
 ![Cloudwatch](https://acapublicimages.s3.us-east-2.amazonaws.com/CloudWatch.png "Cloudwatch")
+
+# CI/CD
+
+- Build Pipeline setup to automatical trigger build on commit to master branch using Github webhooks
+
+![CI/CD](https://acapublicimages.s3.us-east-2.amazonaws.com/CICD.png "CI/CD")
+
+- //TODO:Setup CodeDeploy to auto deploy

@@ -1,0 +1,16 @@
+﻿@page "/classes"
+
+@using ACA.Domain
+@inherits ClassesBase
+
+
+<TelerikGrid Data="@ClassScoreReports" Pageable="true" PageSize="15" Sortable="true" Height="800px"
+             Reorderable="true" Resizable="true" Groupable="true" FilterMode="GridFilterMode.FilterMenu">
+    <GridColumns>
+        <GridColumn Field="@(nameof(ClassScoreReport.ClassName))" Title="Class Name" Groupable="false" />
+        <GridColumn Field="@(nameof(ClassScoreReport.ClassAverage))" Title="Class Average" />
+        <GridColumn Field="@(nameof(ClassScoreReport.RoundedClassAverage))" Title="Rounded Class Average" />
+        <GridColumn Field="@(nameof(ClassScoreReport.TotalStudents))" Title="Total Students" />
+        <GridColumn Field="@(nameof(ClassScoreReport.TotalStudentsIncludedInAverage))" Title="Students Included InAverage" />
+    </GridColumns>
+</TelerikGrid>

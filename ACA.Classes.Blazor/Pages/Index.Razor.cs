@@ -24,8 +24,8 @@ namespace ACA.Classes.Blazor.Pages
 
         public string ErrorMessage { get; set; }
         public string SaveUrl => ToAbsoluteUrl("api/upload/save");
-        public string RemoveUrl => ToAbsoluteUrl("api/upload/remove");
         public bool ShowError { get; set; }
+        
         public string ToAbsoluteUrl(string url)
         {
             return $"{NavigationManager.BaseUri}{url}";
@@ -33,6 +33,19 @@ namespace ACA.Classes.Blazor.Pages
 
         public string[] Categories { get; set; }
         
+        protected override async Task OnInitializedAsync()
+        {
+            await LoadScoreReportsData();
+        }
+
+        protected virtual async Task LoadScoreReportsData()
+        {
+            var scoreReport = await ScoreReportService.GetScoreReportAsync();
+            ClassScoreReports = scoreReport.ClassScores.Where(c => c.RoundedClassAverage.HasValue)
+                .OrderByDescending(c => c.RoundedClassAverage.Value).ToList();
+            Categories = ClassScoreReports.Select(s => s.ClassName).ToArray();
+        }
+
         protected async Task OnSuccessHandler(UploadSuccessEventArgs e)
         {
             await LoadScoreReportsData();
@@ -51,17 +64,10 @@ namespace ACA.Classes.Blazor.Pages
             return Task.CompletedTask;
         }
 
-        protected override async Task OnInitializedAsync()
+        protected async Task OnResetClickHandler()
         {
+            await CsvDataFileService.ResetDataFilesAsync();
             await LoadScoreReportsData();
-        }
-
-        protected virtual async Task LoadScoreReportsData()
-        {
-            var scoreReport = await ScoreReportService.GetScoreReportAsync();
-            ClassScoreReports = scoreReport.ClassScores.Where(c => c.RoundedClassAverage.HasValue)
-                .OrderByDescending(c => c.RoundedClassAverage.Value).ToList();
-            Categories = ClassScoreReports.Select(s => s.ClassName).ToArray();
         }
 
         protected async Task OnClickHandler()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ACA.Domain;
 using Amazon;
@@ -58,7 +59,7 @@ namespace ACA.Data
             {
                 response = await _amazonS3Client.ListObjectsV2Async(request);
                 foreach (var entry in response.S3Objects.
-                    Where(entry => entry.Key.IndexOf(FileSearchPattern) >= 0))
+                    Where(entry => entry.Key.IndexOf(FileSearchPattern) >= 0 && entry.Key.StartsWith("DataFiles/")))
                 {
                     s3Keys.Add(entry.Key);
                     _logger.LogInformation("key = {0} size = {1}", entry.Key, entry.Size);
@@ -69,6 +70,62 @@ namespace ACA.Data
 
             _logger.LogInformation("GetCsvFilesInDirectory Found {CountCsvFiles} Files Matching Search Pattern - DataFileLocation:{DataFileLocation},FileSearchPattern:{FileSearchPattern}", s3Keys.Count, DataFileLocation, FileSearchPattern);
             return s3Keys;
+        }
+
+        public async Task<bool> ResetDataFilesAsync()
+        {
+            var request = new ListObjectsRequest();
+            request.BucketName = DataFileLocation;
+            do
+            {
+                var response = await _amazonS3Client.ListObjectsAsync(request,CancellationToken.None);
+
+                foreach (var file in response.S3Objects.Where(s => s.Key.StartsWith("DataFiles/") && s.Key != "DataFiles/"))
+                {
+                    var deleteObjectRequest = new DeleteObjectRequest
+                    {
+                        BucketName = request.BucketName,
+                        Key = file.Key
+                    };
+                    await _amazonS3Client.DeleteObjectAsync(deleteObjectRequest);
+                }
+                if (response.IsTruncated)
+                {
+                    request.Marker = response.NextMarker;
+                }
+                else
+                {
+                    request = null;
+                }
+            } while (request != null);
+
+            var copyRequest = new CopyObjectRequest
+            {
+                SourceBucket =  DataFileLocation,
+                SourceKey = "MasterFiles/ClassA.csv",
+                DestinationBucket = DataFileLocation,
+                DestinationKey = "DataFiles/ClassA.csv"
+            };
+            var result = await _amazonS3Client.CopyObjectAsync(copyRequest);
+
+            copyRequest = new CopyObjectRequest
+            {
+                SourceBucket = DataFileLocation,
+                SourceKey = "MasterFiles/ClassB.csv",
+                DestinationBucket = DataFileLocation,
+                DestinationKey = "DataFiles/ClassB.csv"
+            };
+            result = await _amazonS3Client.CopyObjectAsync(copyRequest);
+
+            copyRequest = new CopyObjectRequest
+            {
+                SourceBucket = DataFileLocation,
+                SourceKey = "MasterFiles/ClassC.csv",
+                DestinationBucket = DataFileLocation,
+                DestinationKey = "DataFiles/ClassC.csv"
+            };
+            result = await _amazonS3Client.CopyObjectAsync(copyRequest);
+            return true;
         }
 
         /// <summary>

@@ -9,6 +9,8 @@ namespace ACA.Data
     {
         Task<List<string>> GetCsvFilesInDirectoryAsync();
 
+        Task<bool> ResetDataFilesAsync();
+
         Task<List<Student>> GetStudentGradesFromCsvFileAsync(string file);
 
         Task<string> SaveStreamToFile(Stream memoryStream, string folder = null,string fileName=null);
