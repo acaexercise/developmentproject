@@ -11,7 +11,7 @@ namespace ACA.Data
 
         Task<List<Student>> GetStudentGradesFromCsvFileAsync(string file);
 
-        Task<string> SaveStreamToFile(Stream memoryStream);
+        Task<string> SaveStreamToFile(Stream memoryStream, string folder = null,string fileName=null);
 
         string DataFileLocation { get; }
 

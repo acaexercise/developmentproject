@@ -98,19 +98,21 @@ namespace ACA.Data
         /// Saves specified memory stream to the files system
         /// </summary>
         /// <param name="memoryStream"></param>
+        /// <param name="folder"></param>
+        /// <param name="fileName"></param>
         /// <returns></returns>
-        public Task<string> SaveStreamToFile(Stream memoryStream)
+        public Task<string> SaveStreamToFile(Stream memoryStream,string folder=null, string fileName = null)
         {
-            var fileName = _csvDataFileConfiguration.OutputFileFolder + Guid.NewGuid() + ".txt";
+            var name = (folder?? _csvDataFileConfiguration.OutputFileFolder) + "/" + (fileName?? Guid.NewGuid() + ".txt");
             memoryStream.Seek(0, SeekOrigin.Begin);
 
-            using (var fs = new FileStream(fileName, FileMode.OpenOrCreate))
+            using (var fs = new FileStream(name, FileMode.OpenOrCreate))
             {
                 memoryStream.CopyTo(fs);
                 fs.Flush();
             }
 
-            return Task.FromResult(fileName);
+            return Task.FromResult(name);
         }
     }
 }

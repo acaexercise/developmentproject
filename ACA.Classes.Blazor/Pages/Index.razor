@@ -2,8 +2,7 @@
 @inherits IndexBase
 @using ACA.Classes.Blazor.Charts;
 
-<div class="dashboard">
-
+<div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -11,20 +10,42 @@
                 <div class="card-body">
 
                     <div class="row">
-                        <TelerikButton OnClick="@OnClickHandler">Generate Text Report</TelerikButton>
+                        <div class="col">
+                            <TelerikButton OnClick="@OnClickHandler">Generate Text Report</TelerikButton>
+                        </div>
+                        <div class="col">
+                            <label>Upload Data Files</label>
+                            <TelerikUpload SaveUrl="@SaveUrl"
+                                           OnSuccess="@OnSuccessHandler"
+                                           OnError="@OnErrorHandler"
+                                           AllowedExtensions="@(new List<string>() {".csv", ".txt"})"
+                                           MaxFileSize="2048000" MinFileSize="0" />
+                            <TelerikWindow Modal="true" Visible="@ShowError" VisibleChanged="@ErrorWindowVisibleChanged">
+                                <WindowTitle>
+                                    <strong>Upload Failed</strong>
+                                </WindowTitle>
+                                <WindowContent>
+                                    @ErrorMessage
+                                </WindowContent>
+                                <WindowActions>
+                                    <WindowAction Name="Close" />
+                                </WindowActions>
+                            </TelerikWindow>
+                        </div>
+                        <div class="col"></div>
+                        <div class="col"></div>
                     </div>
 
-                        <div class="row">
+                    <div class="row">
 
-                            <div class="col-sm-12 col-md-6 col-lg text-success ">
-                                <ClassGradesChart ChartData="@ClassScoreReports"></ClassGradesChart>
-                            </div>
-
+                        <div class="col-sm-12 col-md-6 col-lg text-success ">
+                            <ClassGradesChart ChartData="@ClassScoreReports"></ClassGradesChart>
                         </div>
 
                     </div>
-                </div>
-        </div>
 
+                </div>
+            </div>
+        </div>
     </div>
 </div>

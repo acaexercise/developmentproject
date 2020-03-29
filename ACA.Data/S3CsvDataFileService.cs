@@ -128,14 +128,16 @@ namespace ACA.Data
         /// Saves the stream to S3 Object
         /// </summary>
         /// <param name="memoryStream"></param>
+        /// <param name="folder"></param>
+        /// <param name="fileName"></param>
         /// <returns></returns>
-        public async Task<string> SaveStreamToFile(Stream memoryStream)
+        public async Task<string> SaveStreamToFile(Stream memoryStream,string folder=null,string fileName=null)
         {
             try
             {
                 var bucketName = _s3CsvDataFileConfiguration.DataFileLocation;
-                var keyName = Guid.NewGuid() + ".txt";
-                var filePath = _s3CsvDataFileConfiguration.OutputFileFolder;
+                var keyName = fileName?? Guid.NewGuid() + ".txt";
+                var filePath = folder?? _s3CsvDataFileConfiguration.OutputFileFolder;
 
                var fileTransferUtility = new TransferUtility(_amazonS3Client);
                memoryStream.Seek(0, SeekOrigin.Begin);

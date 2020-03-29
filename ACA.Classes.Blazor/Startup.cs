@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using ACA.Data;
 using ACA.Domain;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace ACA.Classes.Blazor
@@ -29,7 +30,12 @@ namespace ACA.Classes.Blazor
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddRazorPages(o=>
+            {
+                o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+            });
+            services.AddMvc(options => options.EnableEndpointRouting = false)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddServerSideBlazor();
             services.AddTelerikBlazor();
             //https://forums.asp.net/t/2158728.aspx?Blazor+in+load+balanced+environment+
@@ -75,7 +81,7 @@ namespace ACA.Classes.Blazor
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseMvcWithDefaultRoute();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();

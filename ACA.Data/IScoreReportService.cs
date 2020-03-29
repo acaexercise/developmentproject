@@ -9,5 +9,7 @@ namespace ACA.Data
         Task<ScoreReport> GetScoreReportAsync();
 
         Task<Stream> ExportScoreReportToStreamAsync();
+
+        Task<ClassScoreReport> GetClassScoreReportAsync(string dataFile);
     }
 }
