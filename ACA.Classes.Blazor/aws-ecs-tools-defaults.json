@@ -16,7 +16,7 @@
     "task-definition-task-role" : "arn:aws:iam::132409392314:role/ecs_execution_ACAClassesBlazor",
     "task-execution-role"       : "ecsTaskExecutionRole",
     "container-name"            : "ACAClassesBlazor",
-    "container-port-mapping"    : "80:80",
+    "container-port-mapping"    : "443:443,80:80",
     "container-environment-variables" : "\"ASPNETCORE_ENVIRONMENT\"=\"Production\"",
     "skip-image-push"                 : false,
     "cluster-service"                 : "aca-blazor",
