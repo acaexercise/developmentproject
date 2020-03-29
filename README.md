@@ -20,20 +20,20 @@
 
 - Currently Hosted in AWS using ECS [Fargate](https://aws.amazon.com/fargate/) with an ELB routing across 3 AZs
 
-![ECS](https://acapublicimages.s3.us-east-2.amazonaws.com/EcsCluster.png "ECS")
+![ECS](https://acapublicimages.s3.us-east-2.amazonaws.com/EcsCluster2.png "ECS")
 
 - Data Files Securely Read from and Written to S3 Bucket
 
-![S3](https://acapublicimages.s3.us-east-2.amazonaws.com/s3.png "S3")
+![S3](https://acapublicimages.s3.us-east-2.amazonaws.com/s32.png "S3")
 
 - Logging via .NET Core's Built in ILogger routed to Cloudwatch LogGroup
 
-![Cloudwatch](https://acapublicimages.s3.us-east-2.amazonaws.com/CloudWatch.png "Cloudwatch")
+![Cloudwatch](https://acapublicimages.s3.us-east-2.amazonaws.com/CloudWatch2.png "Cloudwatch")
 
 # CI/CD
 
 - Build Pipeline setup to automatical trigger build on commit to master branch using Github webhooks
 
-![CI/CD](https://acapublicimages.s3.us-east-2.amazonaws.com/CICD.png "CI/CD")
+![CI/CD](https://acapublicimages.s3.us-east-2.amazonaws.com/CICD2.png "CI/CD")
 
 - //TODO:Setup CodeDeploy to auto deploy
