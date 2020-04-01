@@ -1,9 +1,9 @@
   
 version: 0.2
 env:
-    secrets-manager:
-         TelerikPrivateNugetFeedUsername:TelerikPrivateNugetFeed:Username
-         TelerikPrivateNugetFeedPassword:TelerikPrivateNugetFeed:Password
+  secrets-manager:
+    TelerikPrivateNugetFeedUsername:TelerikPrivateNugetFeed:Username
+    TelerikPrivateNugetFeedPassword:TelerikPrivateNugetFeed:Password
 phases:
   pre_build:
     commands:
