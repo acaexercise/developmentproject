@@ -7,7 +7,9 @@ env:
 phases:
   pre_build:
     commands:
-      - echo $TELERIKPRIVATENUGETFEEDUSERNAME
+      - export TELERIKPRIVATENUGETFEEDUSERNAME=$TelerikPrivateNugetFeedUsername
+      - export TELERIKPRIVATENUGETFEEDPASSWORD=$TelerikPrivateNugetFeedPassword
+      - echo $TelerikPrivateNugetFeedUsername
       - sed -inuget.config 's/%TelerikNugetFeedUserName%/$TELERIKPRIVATENUGETFEEDUSERNAME/' nuget.config
       - sed -inuget.config 's/%$TelerikPrivateNugetFeedPassword%/$TELERIKPRIVATENUGETFEEDPASSWORD/' nuget.config
       - dotnet restore 
@@ -17,3 +19,4 @@ phases:
 artifacts:
   files:
     - build_output/**/*
+    - nuget.config
