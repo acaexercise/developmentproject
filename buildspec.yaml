@@ -2,16 +2,14 @@
 version: 0.2
 env:
   secrets-manager:
-    TELERIKPRIVATENUGETFEEDUSERNAME: TelerikPrivateNugetFeed:Username
-    TELERIKPRIVATENUGETFEEDPASSWORD: TelerikPrivateNugetFeed:Password
+    TelerikNugetFeedUserName: TelerikPrivateNugetFeed:Username
+    TelerkNugetFeedPassword: TelerikPrivateNugetFeed:Password
 phases:
   pre_build:
     commands:
-      - export TELERIKPRIVATENUGETFEEDUSERNAME=$TelerikPrivateNugetFeedUsername
-      - export TELERIKPRIVATENUGETFEEDPASSWORD=$TelerikPrivateNugetFeedPassword
-      - echo $TelerikPrivateNugetFeedUsername
-      - sed -inuget.config 's/%TelerikNugetFeedUserName%/$TELERIKPRIVATENUGETFEEDUSERNAME/' nuget.config
-      - sed -inuget.config 's/%$TelerikPrivateNugetFeedPassword%/$TELERIKPRIVATENUGETFEEDPASSWORD/' nuget.config
+      - echo $TelerikNugetFeedUserName
+      - sed -inuget.config 's/%TelerikNugetFeedUserName%/$TelerikNugetFeedUserName/' nuget.config
+      - sed -inuget.config 's/%TelerkNugetFeedPassword%/$TelerkNugetFeedPassword/' nuget.config
       - dotnet restore 
   build:
     commands:
