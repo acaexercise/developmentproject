@@ -18,6 +18,3 @@ phases:
 artifacts:
   files:
     - build_output/**/*
-
-
-    TelerikPrivateNugetFeed:Username
